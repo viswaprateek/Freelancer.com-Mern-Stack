@@ -360,6 +360,21 @@ export const sendChatMessage = async (messageData) => {
     throw error; // Throw an error if the bid submission request fails.
   }
 };
+export const getContractsByUser = async (userId) => {
+  console.log(userId)
+  try {
+    // Check if userId is present
+    if (!userId) {
+      throw new Error('No user ID provided');
+    }
+    const response = await api.get(`/contracts/user/${userId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to fetch contracts', error);
+    throw error;
+  }
+};
+
 
 
 // Note: This code defines functions for making API requests using Axios. Each function sends a request to a specific endpoint and returns the response data if the request is successful or throws an error if it fails.
