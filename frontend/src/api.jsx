@@ -375,6 +375,40 @@ export const getContractsByUser = async (userId) => {
   }
 };
 
+// In your API management file (e.g., api.js)
+export const getContractById = async (contractId) => {
+  try {
+    const response = await api.get(`/contracts/${contractId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching contract by ID', error);
+    throw error;
+  }
+};
+// api.js
+
+export const getMessagesByContract = async (contractId) => {
+  try {
+      const response = await api.get(`/messages/${contractId}`);
+      return response.data;
+  } catch (error) {
+      console.error('Failed to fetch messages:', error);
+      throw error;
+  }
+};
+
+export const postMessage = async (messageData) => {
+  try {
+      const response = await api.post('/messages/', messageData);
+      return response.data;
+  } catch (error) {
+      console.error('Failed to post message:', error);
+      throw error;
+  }
+};
+
+
+
 
 
 // Note: This code defines functions for making API requests using Axios. Each function sends a request to a specific endpoint and returns the response data if the request is successful or throws an error if it fails.
