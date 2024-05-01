@@ -18,6 +18,7 @@ function Signup() {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("CLIENT");
+
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const handleSignup = async () => {

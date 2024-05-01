@@ -18,6 +18,7 @@ const JobDetailPage = () => {
     <div>
       <h1>Job Details</h1>
       <ViewJob jobId={id} />
+      
       <BidsComponent jobId={id} />
       {userRole === 'FREELANCER' && <PlaceBidForm jobId={id} />}
       {/* {userRole === 'CLIENT' && 
@@ -26,6 +27,12 @@ const JobDetailPage = () => {
       } */}
 
       {/* <Feedback /> */}
+      <Layout>
+      <h1>Job Details</h1>
+     
+      
+      <ChatBox jobId={id} />
+    </Layout>
     </div>
     </Layout>
   );

@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Button, Dialog, DialogContent, DialogActions, TextField, Box } from '@mui/material';
 import { placeBid } from '../api'; // Import the API function to place a bid
+import { useAuth } from '../AuthContext'; // Import useAuth to access user context
 
 const PlaceBidForm = ({ jobId }) => {
   const [open, setOpen] = useState(false);
   const [bidData, setBidData] = useState({ amount: '', proposedCompletionDate: '' });
+  const { userId } = useAuth(); // Access userId from the auth context
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -18,7 +20,7 @@ const PlaceBidForm = ({ jobId }) => {
       const formattedBidData = {
         ...bidData,
         jobId: jobId,
-        // Append a default time part to the date
+        userId: userId, // Include the userId in the bid data
         proposedCompletionDate: `${bidData.proposedCompletionDate}T00:00:00`
       };
       await placeBid(formattedBidData);
@@ -28,16 +30,14 @@ const PlaceBidForm = ({ jobId }) => {
       console.error('Error placing bid:', error);
     }
   };
-  
 
   return (
     <>
-<Box textAlign="center" m={2}>
-  <Button variant="contained" color="primary" size="large" onClick={handleOpen}>
-    Place a Bid
-  </Button>
-</Box>
-
+      <Box textAlign="center" m={2}>
+        <Button variant="contained" color="primary" size="large" onClick={handleOpen}>
+          Place a Bid
+        </Button>
+      </Box>
 
       <Dialog open={open} onClose={handleClose}>
         <DialogContent>
@@ -47,6 +47,7 @@ const PlaceBidForm = ({ jobId }) => {
             fullWidth
             margin="dense"
             name="amount"
+            value={bidData.amount}
             onChange={handleChange}
           />
           <TextField
@@ -56,6 +57,7 @@ const PlaceBidForm = ({ jobId }) => {
             margin="dense"
             InputLabelProps={{ shrink: true }}
             name="proposedCompletionDate"
+            value={bidData.proposedCompletionDate}
             onChange={handleChange}
           />
         </DialogContent>

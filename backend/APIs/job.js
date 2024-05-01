@@ -131,5 +131,55 @@ router.put('/save/:jobId', connectDB, async (req, res) => {
 });
 
 
+router.post('/job/:jobId/bid', connectDB, async (req, res) => {
+    const { jobId } = req.params;
+    const bidData = req.body;
+
+    try {
+        const db = req.dbClient.db('freelancers');
+        const jobsCollection = db.collection('jobs');
+        const updateResult = await jobsCollection.updateOne(
+            { _id: ObjectId(jobId) },
+            { $push: { bids: bidData } }
+        );
+
+        if (updateResult.modifiedCount === 1) {
+            res.status(200).json({ message: 'Bid added successfully to the job.' });
+        } else {
+            res.status(404).json({ message: 'Job not found' });
+        }
+    } catch (error) {
+        console.error('Error posting bid to job:', error);
+        res.status(500).json({ message: 'Failed to post bid to job' });
+    } finally {
+        req.dbClient.close();
+    }
+});
+
+
+// Get a job by ID along with its bids
+router.get('/view/:jobId', connectDB, async (req, res) => {
+    const { jobId } = req.params;
+
+    try {
+        const db = req.dbClient.db('freelancers');
+        const jobsCollection = db.collection('jobs');
+        console.log(ObjectId(jobId))
+        const job = await jobsCollection.findOne({ _id: ObjectId(jobId) });
+
+        if (job) {
+            res.status(200).json(job);
+        } else {
+            res.status(404).json({ message: 'Job not found' });
+        }
+    } catch (error) {
+        console.error('Error fetching job:', error);
+        res.status(500).json({ message: 'Failed to fetch job' });
+    } finally {
+        req.dbClient.close();
+    }
+});
+
+
 
 module.exports = router;

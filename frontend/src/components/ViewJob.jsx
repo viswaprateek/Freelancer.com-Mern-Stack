@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getJobById } from '../api'; // Make sure this points to your API utility
+import { getJobById } from '../api';
 import { Card, CardContent, Typography, Box, Grid } from '@mui/material';
 
 const ViewJob = ({ jobId }) => {
@@ -23,22 +23,22 @@ const ViewJob = ({ jobId }) => {
   }
 
   return (
-    <Card>  
+    <Card>
       <CardContent>
-        <Typography variant="h5">{job.job.title}</Typography>
-        <Typography variant="body1">{job.job.description}</Typography>
+        <Typography variant="h5">{job.title}</Typography>
+        <Typography variant="body1">{job.description}</Typography>
         <Typography variant="body2" color="text.secondary">
-          Budget: ${job.job.budget}
+          Budget: ${job.budget.min} - ${job.budget.max}
         </Typography>
+        {/* Additional job details */}
         <Grid container spacing={2} sx={{ marginTop: 2 }}>
           <Grid item xs={12} sm={6}>
-            <Typography variant="subtitle1">Author: {job.job.author.username}</Typography>
-            <Typography variant="subtitle2">Location: {job.job.author.profile?.location}</Typography>
+            {/* Display dynamic data if available */}
+            <Typography variant="subtitle1">Skills Required: {job.skillsRequired.join(', ')}</Typography>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <Typography variant="subtitle1">Total Jobs: {job.totalJobsNo}</Typography>
-            <Typography variant="subtitle2">Hired Jobs: {job.hiredJobsNo}</Typography>
-            <Typography variant="subtitle2">Hire Rate: {job.hireRate}%</Typography>
+            {/* More details can be added here */}
+            <Typography variant="subtitle1">Status: {job.status}</Typography>
           </Grid>
         </Grid>
       </CardContent>

@@ -201,9 +201,9 @@ export const deleteJob = async (jobId) => {
 
 
 export const getJobById = async (jobId) => {
+  console.log("Job ID:", jobId);  // This will show what jobId is being passed
   try {
-    const response = await  api.get(`/job/view/${jobId}`);
-    // console.log(response.data)
+    const response = await api.get(`/job/view/${jobId}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching job:', error);
@@ -310,15 +310,16 @@ export const saveProfile = async (profileData) => {
 };
 
 export const placeBid = async (bidData) => {
+  console.log('Placing bid with data:', bidData);  // Log data being sent
   try {
-    // Adjust the URL and data format as per your backend API's requirements
     const response = await api.post('/bids/save', bidData);
-    return response.data; // Return the response data if the bid submission is successful.
+    return response.data;
   } catch (error) {
     console.error('Error placing bid:', error);
-    throw error; // Throw an error if the bid submission request fails.
+    throw error;
   }
 };
+
 export const getChatMessages = async (jobId) => {
   try {
     // Adjust the URL and data format as per your backend API's requirements

@@ -56,17 +56,19 @@ export function AuthProvider({ children }) {
    * @param {string} id - The user's ID.
    */
   const login = (token, role, id) => {
-    console.log("Setting cookies:", token, role, id);
-
+    console.log("Setting cookies and context values:", token, role, id);
+  
     setCookie('accessToken', token, {path: '/', secure: true, sameSite: 'None' });
     setCookie('role', role, {path: '/', secure: true, sameSite: 'None' });
     setCookie('userId', id, {path: '/', secure: true, sameSite: 'None' });
     setAccessToken(token);
     setAuthenticated(true);
     setUserRole(role);
-    setUserId(id);
+    setUserId(id);  // Log to ensure this is being set
+    console.log("After setting in context:", userId);
     setAuthToken(token); // Update the authorization header
   }
+  
   
 
   /**
@@ -81,7 +83,11 @@ export function AuthProvider({ children }) {
     setUserRole("");
     setUserId("");
     setAuthToken(null); // Clear the authorization header
+  
+    // Additional step: Force a re-render or handle navigation
+    window.location.href = '/'; // Redirect to login or home page
   }
+  
 
   // Provide the authentication state and functions to child components using the context.
   return (

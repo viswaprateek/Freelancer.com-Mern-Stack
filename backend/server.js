@@ -25,7 +25,11 @@ mongoClient.connect(process.env.DB_URL)
 
     const jobscollection = freelancers.collection('jobscollections');
     app.set('jobscollection', jobscollection);
-
+    const bidscollection = freelancers.collection('bidscollections');
+    app.set('bidscollection', bidscollection);
+    const messagesCollection = freelancers.collection('messages');
+    app.set('messagesCollection', messagesCollection);
+    
 
     console.log("DB connection success");
   })
@@ -34,9 +38,14 @@ mongoClient.connect(process.env.DB_URL)
 // Import API routes
 const userApp = require('./APIs/user-api');
 const job = require('./APIs/job');
+const bids = require('./APIs/bids');
+const message = require('./APIs/message');
+
 
 app.use('/user-api', userApp);
 app.use('/job', job);
+app.use('/bids', bids);
+app.use('/message', message);
 
 app.get('/', (req, res) => {
   res.send('Hello from your Backend!');

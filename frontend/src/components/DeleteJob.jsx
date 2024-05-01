@@ -4,16 +4,20 @@ import { Button, Dialog, DialogActions, DialogContent, DialogContentText, Dialog
 
 const DeleteJob = ({ jobId, open, onClose, onJobDeleted }) => {
   const handleDelete = async () => {
-    try {
-      console.log(jobId)
-      await deleteJob(jobId);
-      onJobDeleted(jobId);
-       // Callback to update the job list
-      onClose(); // Close the dialog
-    } catch (error) {
-      console.error('Error deleting job:', error);
+    console.log(jobId)
+    if (jobId) {
+      try {
+        await deleteJob(jobId);
+        onJobDeleted(jobId);
+        onClose();
+      } catch (error) {
+        console.error('Error deleting job:', error);
+      }
+    } else {
+      console.error('Job ID is undefined for delete operation');
     }
   };
+  
 
   return (
     <Dialog open={open} onClose={onClose}>

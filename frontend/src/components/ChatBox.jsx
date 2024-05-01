@@ -120,7 +120,7 @@ const ChatComponent = ({ jobId, bidId }) => {
             onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
           />
         </Grid>
-        <Grid item xs={1}>
+        {/* <Grid item xs={1}>
           <input
             type="file"
             accept="image/*"
@@ -133,7 +133,7 @@ const ChatComponent = ({ jobId, bidId }) => {
               Attach Image
             </Button>
           </label>
-        </Grid>
+        </Grid> */}
         <Grid item xs={2}>
           <Button variant="contained" color="primary" endIcon={<SendIcon />} onClick={handleSendMessage}>
             Send

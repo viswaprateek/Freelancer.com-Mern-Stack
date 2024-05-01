@@ -13,19 +13,21 @@ import Bids from './pages/Bids';
 import JobDetailPage from './pages/JobDetailed';
 import MyJobsDetailed from './pages/MyJobsDetailed';
 import Contracts from './pages/Contracts';
+import { AuthProvider } from './AuthContext';
 
 function App() {
   // Check if the user is authenticated (e.g., by checking cookies or the authentication state)
   const { authenticated } = useAuth();
 console.log(authenticated)
   return (
+    <AuthProvider>
     <BrowserRouter>
       <Routes>
-        {/* Default Route */}
-        <Route
-          path="/"
-          element={<Home />}
-        />  
+          {/* Default Route */}
+          <Route
+            path="/"
+            element={<Home />}
+          />  
         
         {/* Signup Route: Renders the Signup component if the user is not authenticated; otherwise, navigates to the Dashboard. */}
         <Route
@@ -91,6 +93,7 @@ console.log(authenticated)
 
       </Routes>
     </BrowserRouter>
+      </AuthProvider>
   );
 }
 
