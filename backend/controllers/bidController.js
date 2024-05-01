@@ -2,30 +2,46 @@ const Bid = require('../models/bidModel'); // Your Bid model
 const Job = require('../models/Job');
 
 
+// controllers/bidController.js
+const Contract = require('../models/Contract'); // Import the Contract model
+
 exports.acceptBid = async (req, res) => {
     const bidId = req.params.bidId;
     try {
-        const bid = await Bid.findById(bidId);
+        const bid = await Bid.findById(bidId).populate('jobId');
         if (!bid) {
             return res.status(404).json({ message: 'Bid not found' });
         }
 
-        // Update the job to set it as closed and add this bid to the bids array
+        // Update the job to set it as closed
         const job = await Job.findByIdAndUpdate(
-            bid.jobId,
-            { $set: { status: 'closed' }, $push: { bids: bid._id } },
+            bid.jobId._id,
+            { status: 'closed', $push: { bids: bid._id } },
             { new: true }
         );
-        
+
         if (!job) {
             return res.status(404).json({ message: 'Job not found' });
         }
 
-        res.json({ message: 'Bid accepted', job });
+        // Create a contract
+        const contract = new Contract({
+          jobId: job._id,
+          bidId: bid._id,
+          clientId: job.createdBy,
+          freelancerId: bid.userId,
+          bidAmount: bid.amount,
+          completionDate: bid.proposedCompletionDate
+        });
+        
+        await contract.save();
+
+        res.json({ message: 'Bid accepted, contract created', job, contract });
     } catch (error) {
         res.status(500).json({ message: 'Error accepting bid', error: error.message });
     }
 };
+
 exports.placeBid = async (req, res) => {
     const { amount, proposedCompletionDate, jobId, userId } = req.body;
     try {
