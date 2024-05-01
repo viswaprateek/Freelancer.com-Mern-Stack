@@ -188,15 +188,19 @@ export const saveJob = async (jobData, token) => {
 // Function to update a job
 export const updateJob = async (jobId, updatedData) => {
   try {
-    const response = await api.put(`/job/save?${jobId}`, updatedData);
+    // Correctly format the URL to include jobId as a path parameter, not a query string
+    const response = await api.put(`/job/save/${jobId}`, updatedData); // Adjusted the endpoint to match typical REST API conventions
     return response.data;
   } catch (error) {
+    console.error('Error updating job:', error);
     throw error;
   }
 };
 
+
 // Function to delete a job
 export const deleteJob = async (jobId) => {
+  console.log(jobId)
   try {
     const response = await api.delete(`/job/delete/${jobId}`);
     return response.data;
@@ -245,6 +249,15 @@ export const acceptBid = async (bidId) => {
   } catch (error) {
     console.error('Error accepting bid:', error);
     throw error;
+  }
+};
+export const getJobByIdWithBids = async (jobId) => {
+  try {
+      const response = await api.get(`/job/view/${jobId}`);
+      return response.data;
+  } catch (error) {
+      console.error('Error fetching job with bids:', error);
+      throw error;
   }
 };
 export const closeBid = async (bidId) => {

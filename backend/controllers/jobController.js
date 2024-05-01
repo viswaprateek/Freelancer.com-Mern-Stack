@@ -45,10 +45,13 @@ exports.getJobsByUserId = async (req, res) => {
 
 exports.updateJob = async (req, res) => {
     try {
-        const job = await Job.findByIdAndUpdate(req.params.jobId, req.body, { new: true });
+        const job = await Job.findByIdAndUpdate(req.params.jobId, req.body, { new: true, runValidators: true });
+        if (!job) {
+            return res.status(404).json({ message: 'Job not found' });
+        }
         res.json(job);
     } catch (error) {
-        res.status(400).json({ message: 'Error updating job', error: error.message });
+        res.status(500).json({ message: 'Error updating job', error: error.message });
     }
 };
 

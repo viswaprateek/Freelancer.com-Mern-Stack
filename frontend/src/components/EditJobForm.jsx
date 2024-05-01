@@ -14,32 +14,57 @@ const style = {
 };
 
 const EditJobForm = ({ open, onClose, job, onJobUpdated }) => {
-  const [jobData, setJobData] = useState({ title: '', description: '', budget: { min: 0, max: 0 }, skillsRequired: [], status: '' });
+  const [jobData, setJobData] = useState({
+    title: '',
+    description: '',
+    budget: { min: '', max: '' },
+    skillsRequired: [],
+    status: ''
+  });
 
   useEffect(() => {
     const fetchJobData = async () => {
       try {
-        const fetchedJobData = await getJobById(job.jobId);
-        setJobData(fetchedJobData);
+        const fetchedJobData = await getJobById(job._id);  // Ensure you're using the correct job identifier (e.g., job._id)
+        setJobData({
+          title: fetchedJobData.title,
+          description: fetchedJobData.description,
+          budget: fetchedJobData.budget,
+          skillsRequired: fetchedJobData.skillsRequired,
+          status: fetchedJobData.status
+        });
       } catch (error) {
-        console.error('Error fetching job:', error);
+        console.error('Error fetching job data:', error);
       }
     };
 
-    if (job) {
+    if (job && job._id) {
       fetchJobData();
     }
   }, [job]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setJobData({ ...jobData, [name]: value });
+    if (name === "minBudget" || name === "maxBudget") {
+      setJobData(prevState => ({
+        ...prevState,
+        budget: {
+          ...prevState.budget,
+          [name === "minBudget" ? "min" : "max"]: value
+        }
+      }));
+    } else if (name === "skillsRequired") {
+      setJobData({ ...jobData, [name]: value.split(',') });
+    } else {
+      setJobData({ ...jobData, [name]: value });
+    }
   };
 
   const handleSubmit = async (event) => {
+    console.log(job._id)
     event.preventDefault();
     try {
-      const updatedJob = await updateJob(job.jobId, jobData);
+      const updatedJob = await updateJob(job._id, jobData);
       onJobUpdated(updatedJob);
       onClose();
     } catch (error) {
@@ -91,7 +116,7 @@ const EditJobForm = ({ open, onClose, job, onJobUpdated }) => {
           <TextField
             label="Skills Required"
             name="skillsRequired"
-            value={jobData.skillsRequired.join(',')}
+            value={jobData.skillsRequired.join(', ')}
             onChange={handleChange}
             fullWidth
             margin="normal"

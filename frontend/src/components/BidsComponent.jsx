@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { getBidsByJobId, acceptBid } from '../api'; // Importing API functions
 import { Box, Card, CardContent, Typography, Grid, Button } from '@mui/material';
 import { useAuth } from '../AuthContext';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
-const BidsComponent = ({ jobId }) => {
+const BidsComponent = ({ jobId, jobStatus }) => {
   const [bids, setBids] = useState([]);
   const [noBidsAvailable, setNoBidsAvailable] = useState(false);
-  const { userRole } = useAuth(); // Access userRole from AuthContext
+  const { userRole } = useAuth();
+  const navigate = useNavigate(); // Declare the navigate function
 
   useEffect(() => {
     const fetchBids = async () => {
@@ -20,20 +22,12 @@ const BidsComponent = ({ jobId }) => {
         }
       } catch (error) {
         console.error('Error fetching bids:', error);
-        setNoBidsAvailable(true); // Assume no bids if there's an error
+        setNoBidsAvailable(true);
       }
     };
 
     fetchBids();
   }, [jobId]);
-
-  if (noBidsAvailable) {
-    return (
-      <Box textAlign="center" m={2}>
-        <Typography variant="h5">No bids available for this project.</Typography>
-      </Box>
-    );
-  }
 
   const handleAcceptBid = async (bidId) => {
     if (!bidId) {
@@ -43,13 +37,20 @@ const BidsComponent = ({ jobId }) => {
     
     try {
       await acceptBid(bidId);
-      // Refresh or update the bid list to reflect changes
-      setBids(bids.filter(bid => bid._id !== bidId));
+      setBids(bids.filter(bid => bid._id !== bidId)); // Update the list of bids
+      navigate("/user/jobs"); // Redirect to the jobs page
     } catch (error) {
       console.error('Error accepting bid:', error);
     }
   };
-  
+
+  if (noBidsAvailable) {
+    return (
+      <Box textAlign="center" m={2}>
+        <Typography variant="h5">No bids available for this project.</Typography>
+      </Box>
+    );
+  }
 
   return (
     <Grid container spacing={2}>
@@ -59,28 +60,27 @@ const BidsComponent = ({ jobId }) => {
         </Typography>
       </Grid>
       {bids.map((bid, index) => (
-  <Grid item xs={12} sm={6} md={4} key={index}>
-    <Card>
-      <CardContent>
-        <Typography variant="h6">Amount: ${bid.amount}</Typography>
-        <Typography variant="body2">
-          Proposed Completion Date: {new Date(bid.proposedCompletionDate).toLocaleDateString()}
-        </Typography>
-        {userRole === 'CLIENT' && (
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => handleAcceptBid(bid._id)}  // Assuming the ID is stored in _id
-            sx={{ marginTop: 2 }}
-          >
-            Accept Bid
-          </Button>
-        )}
-      </CardContent>
-    </Card>
-  </Grid>
-))}
-
+        <Grid item xs={12} sm={6} md={4} key={index}>
+          <Card>
+            <CardContent>
+              <Typography variant="h6">Amount: ${bid.amount}</Typography>
+              <Typography variant="body2">
+                Proposed Completion Date: {new Date(bid.proposedCompletionDate).toLocaleDateString()}
+              </Typography>
+              {userRole === 'CLIENT' && jobStatus === 'open' && (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => handleAcceptBid(bid._id)}
+                  sx={{ marginTop: 2 }}
+                >
+                  Accept Bid
+                </Button>
+              )}
+            </CardContent>
+          </Card>
+        </Grid>
+      ))}
     </Grid>
   );
 };
