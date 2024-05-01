@@ -84,3 +84,16 @@ exports.getJobById = async (req, res) => {
         res.status(500).json({ message: 'Error fetching job', error: error.message });
     }
 };
+
+// Job controller
+exports.getJobByIdWithBids = async (req, res) => {
+    try {
+        const job = await Job.findById(req.params.jobId).populate('bids');
+        if (!job) {
+            return res.status(404).json({ message: 'Job not found' });
+        }
+        res.json(job);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching job', error: error.message });
+    }
+};

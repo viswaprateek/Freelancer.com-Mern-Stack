@@ -36,16 +36,20 @@ const BidsComponent = ({ jobId }) => {
   }
 
   const handleAcceptBid = async (bidId) => {
-    console.log(bidId)
+    if (!bidId) {
+      console.error('Bid ID is undefined');
+      return;
+    }
+    
     try {
       await acceptBid(bidId);
-      
       // Refresh or update the bid list to reflect changes
-      setBids(bids.filter(bid => bid.bidId !== bidId));
+      setBids(bids.filter(bid => bid._id !== bidId));
     } catch (error) {
       console.error('Error accepting bid:', error);
     }
   };
+  
 
   return (
     <Grid container spacing={2}>
@@ -55,27 +59,28 @@ const BidsComponent = ({ jobId }) => {
         </Typography>
       </Grid>
       {bids.map((bid, index) => (
-        <Grid item xs={12} sm={6} md={4} key={index}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6">Amount: ${bid.amount}</Typography>
-              <Typography variant="body2">
-                Proposed Completion Date: {new Date(bid.proposedCompletionDate).toLocaleDateString()}
-              </Typography>
-              {userRole === 'CLIENT' && (
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => handleAcceptBid(bid.bidId)}
-                  sx={{ marginTop: 2 }}
-                >
-                  Accept Bid
-                </Button>
-              )}
-            </CardContent>
-          </Card>
-        </Grid>
-      ))}
+  <Grid item xs={12} sm={6} md={4} key={index}>
+    <Card>
+      <CardContent>
+        <Typography variant="h6">Amount: ${bid.amount}</Typography>
+        <Typography variant="body2">
+          Proposed Completion Date: {new Date(bid.proposedCompletionDate).toLocaleDateString()}
+        </Typography>
+        {userRole === 'CLIENT' && (
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => handleAcceptBid(bid._id)}  // Assuming the ID is stored in _id
+            sx={{ marginTop: 2 }}
+          >
+            Accept Bid
+          </Button>
+        )}
+      </CardContent>
+    </Card>
+  </Grid>
+))}
+
     </Grid>
   );
 };

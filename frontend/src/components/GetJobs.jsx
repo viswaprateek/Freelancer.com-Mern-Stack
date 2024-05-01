@@ -77,21 +77,31 @@ const GetJobs = () => {
         <MuiLink to={`/user/jobs/${job._id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
           <Typography variant="h5" component="div">{job.title}</Typography>
         </MuiLink>
-        <Typography variant="body2">{job.description}</Typography>
-        
+        <Typography variant="h7">{job.description}</Typography>
+        <Typography variant="h6">{job.status}</Typography>
+
         <Typography variant="body1" color="text.secondary">
           Budget: ${job.budget ? job.budget.min : 0} - ${job.budget ? job.budget.max : 0}
         </Typography>
       </CardContent>
       <CardActions>
-        <Button size="small" component={Link} to={`/user/jobs/${job._id}`}>Learn More</Button>
-        {userRole === 'CLIENT' && (
-          <>
-            <IconButton onClick={() => openEditModal(job)} color="primary"><EditIcon /></IconButton>
-            <IconButton onClick={() => openDeleteDialog(job._id)} color="error"><DeleteIcon /></IconButton>
-          </>
-        )}
-      </CardActions>
+  { job.status === 'open' && (
+    <>
+      <Button size="small" component={Link} to={`/user/jobs/${job._id}`}>Learn More</Button>
+
+      <IconButton onClick={() => openEditModal(job)} color="primary"><EditIcon /></IconButton>
+      <IconButton onClick={() => openDeleteDialog(job._id)} color="error"><DeleteIcon /></IconButton>
+    </>
+  )}
+    {userRole === 'CLIENT'&& job.status === 'closed' && (
+    <>
+      <Button size="small" component={Link} to={`/user/jobs/${job._id}`}>View Bid</Button>
+
+      
+    </>
+  )}
+</CardActions>
+
     </Card>
   </Grid>
 ))}
