@@ -25,6 +25,7 @@ const GetJobs = () => {
       try {
         let fetchedJobs = [];
         if (userRole === 'CLIENT') {
+          
           fetchedJobs = await getspecificJobs(userId);
         } else {
           fetchedJobs = await getJobs();

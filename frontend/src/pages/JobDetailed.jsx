@@ -28,7 +28,7 @@ const JobDetailPage = () => {
 
       {/* <Feedback /> */}
       <Layout>
-      <h1>Job Details</h1>
+      
      
       
       <ChatBox jobId={id} />

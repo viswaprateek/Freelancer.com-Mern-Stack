@@ -1,25 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { getBidsByJobId, acceptBid } from '../api'; // Make sure to implement the acceptBid API function
-import { Box,Card, CardContent, Typography, Grid, Button } from '@mui/material';
-import {useAuth} from '../AuthContext'
+import { getBidsByJobId, acceptBid } from '../api'; // Importing API functions
+import { Box, Card, CardContent, Typography, Grid, Button } from '@mui/material';
+import { useAuth } from '../AuthContext';
 
 const BidsComponent = ({ jobId }) => {
   const [bids, setBids] = useState([]);
   const [noBidsAvailable, setNoBidsAvailable] = useState(false);
-  const { userRole } = useAuth(); // Assuming useAuth provides the userRole
+  const { userRole } = useAuth(); // Access userRole from AuthContext
 
   useEffect(() => {
     const fetchBids = async () => {
       try {
         const fetchedBids = await getBidsByJobId(jobId);
-        // console.log(fetchedBids)
-        if (fetchedBids === 'Bad Request, No jobs found' || fetchedBids.length == 0) {
+        if (!fetchedBids.length) {
           setNoBidsAvailable(true);
         } else {
           setBids(fetchedBids);
           setNoBidsAvailable(false);
-        }      } catch (error) {
+        }
+      } catch (error) {
         console.error('Error fetching bids:', error);
+        setNoBidsAvailable(true); // Assume no bids if there's an error
       }
     };
 
@@ -35,10 +36,12 @@ const BidsComponent = ({ jobId }) => {
   }
 
   const handleAcceptBid = async (bidId) => {
+    console.log(bidId)
     try {
-      // Implement the logic to accept a bid
       await acceptBid(bidId);
-      // Optionally, you can refresh the list of bids or update the state to reflect the accepted bid
+      
+      // Refresh or update the bid list to reflect changes
+      setBids(bids.filter(bid => bid.bidId !== bidId));
     } catch (error) {
       console.error('Error accepting bid:', error);
     }
@@ -46,19 +49,16 @@ const BidsComponent = ({ jobId }) => {
 
   return (
     <Grid container spacing={2}>
-    <Grid item xs={12}>
-      <Typography variant="h4" align="center" gutterBottom>
-        Bids for Project
-      </Typography>
-    </Grid>
-    {bids.map((bid, index) => (
-      // Check if bid is not null and bid.user exists
-      bid && bid.user ? (
+      <Grid item xs={12}>
+        <Typography variant="h4" align="center" gutterBottom>
+          Bids for Project
+        </Typography>
+      </Grid>
+      {bids.map((bid, index) => (
         <Grid item xs={12} sm={6} md={4} key={index}>
           <Card>
             <CardContent>
-              <Typography variant="h6">Bid by: {bid.user.name || 'Unknown User'}</Typography>
-              <Typography variant="body1">Amount: ${bid.amount}</Typography>
+              <Typography variant="h6">Amount: ${bid.amount}</Typography>
               <Typography variant="body2">
                 Proposed Completion Date: {new Date(bid.proposedCompletionDate).toLocaleDateString()}
               </Typography>
@@ -75,9 +75,8 @@ const BidsComponent = ({ jobId }) => {
             </CardContent>
           </Card>
         </Grid>
-      ) : null // Render nothing if bid or bid.user is null
-    ))}
-  </Grid>
+      ))}
+    </Grid>
   );
 };
 

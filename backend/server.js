@@ -1,60 +1,29 @@
-const exp = require('express');
-const app = exp();
-require('dotenv').config(); // process.env.PORT
-const mongoClient = require('mongodb').MongoClient;
-const path = require('path');
-
+const express = require('express');
+const mongoose = require('mongoose');
 const cors = require('cors');
+const userRoutes = require('./routes/userRoutes');
+const jobRoutes = require('./routes/jobRoutes');
+const bidRoutes = require('./routes/bidRoutes'); // Import bid routes
 
-// Allow requests from Vite development server
-const corsOptions = {
-  origin: 'http://localhost:5173', // Vite development server URL
-  methods: 'GET,POST,PUT,DELETE',
-  allowedHeaders: ['Content-Type', 'Authorization'],
-};
+require('dotenv').config();
 
-app.use(cors(corsOptions));
-app.use(exp.json());
+const app = express();
+const PORT = process.env.PORT || 4000;
 
-// Connect to DB
-mongoClient.connect(process.env.DB_URL)
-  .then(client => {
-    const freelancers = client.db('freelancers');
-    const userscollection = freelancers.collection('userscollections');
-    app.set('userscollection', userscollection);
-
-    const jobscollection = freelancers.collection('jobscollections');
-    app.set('jobscollection', jobscollection);
-    const bidscollection = freelancers.collection('bidscollections');
-    app.set('bidscollection', bidscollection);
-    const messagesCollection = freelancers.collection('messages');
-    app.set('messagesCollection', messagesCollection);
-    
-
-    console.log("DB connection success");
-  })
-  .catch(err => console.log("Err in DB connection", err));
-
-// Import API routes
-const userApp = require('./APIs/user-api');
-const job = require('./APIs/job');
-const bids = require('./APIs/bids');
-const message = require('./APIs/message');
+app.use(cors());
+app.use(express.json());
 
 
-app.use('/user-api', userApp);
-app.use('/job', job);
-app.use('/bids', bids);
-app.use('/message', message);
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+.then(() => console.log('MongoDB connected'))
+.catch(err => console.log(err));
 
-app.get('/', (req, res) => {
-  res.send('Hello from your Backend!');
+app.use('/user-api/auth', userRoutes);
+app.use('/job', jobRoutes);
+app.use('/bids', bidRoutes);
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
-
-// Error handling middleware
-app.use((err, req, res, next) => {
-  res.send({ message: "error", payload: err.message });
-});
-
-const port = process.env.PORT || 4000;
-app.listen(port, () => console.log(`Web server on port ${port}`));

@@ -103,13 +103,13 @@ export const signup = async ({ email, password, name, role, bio, skills, portfol
  */
 export const loginuser = async (name, password) => {
   try {
-    // console.log(username)
     const response = await api.post('/user-api/auth/login', { name, password });
     return response.data; // Return the response data if the login is successful.
   } catch (error) {
     throw error; // Throw an error if the login request fails.
   }
 };
+
 
 /**
  * Function to change the user's password.
@@ -161,6 +161,7 @@ export const getJobs = async () => {
 export const getspecificJobs = async (userId) => {
   try {
     const response = await api.get(`/job/user/${userId}`); // Assuming the backend endpoint is /job/user/:userId
+ 
     return response.data;
   } catch (error) {
     throw error;
@@ -168,15 +169,20 @@ export const getspecificJobs = async (userId) => {
 };
 
 // Function to save a new job
-export const saveJob = async (jobData, userId) => {
+export const saveJob = async (jobData, token) => {
   try {
-    // Include userId in the request payload
-    const response = await api.post('/job/save', { ...jobData, userId });
-    return response.data;
+      const response = await api.post('/job/new', jobData, {
+          headers: {
+              Authorization: `Bearer ${token}`
+          }
+      });
+      return response.data;
   } catch (error) {
-    throw error;
+      throw error;
   }
 };
+
+
 
 
 // Function to update a job
@@ -213,7 +219,7 @@ export const getJobById = async (jobId) => {
 
 export const getBidsByJobId = async (jobId) => {
   try {
-    const response = await api.get(`/job/bids/${jobId}`);
+    const response = await api.get(`/bids/job/${jobId}`);
     console.log(response.data)
     return response.data;
   } catch (error) {
@@ -222,15 +228,15 @@ export const getBidsByJobId = async (jobId) => {
   }
 };
 
-export const postBid = async (bidData) => {
-  try {
-    const response = await api.post('/job/save', bidData);
-    return response.data;
-  } catch (error) {
-    console.error('Error posting bid:', error);
-    throw error;
-  }
-};
+// export const postBid = async (bidData) => {
+//   try {
+//     const response = await api.post('/job/save', bidData);
+//     return response.data;
+//   } catch (error) {
+//     console.error('Error posting bid:', error);
+//     throw error;
+//   }
+// };
 
 export const acceptBid = async (bidId) => {
   try {

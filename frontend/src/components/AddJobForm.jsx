@@ -15,7 +15,7 @@ const style = {
 };
 
 const AddJobForm = ({ open, onClose, onJobAdded }) => {
-  const { userId } = useAuth(); // Access userId from AuthContext
+  const { userId , accessToken } = useAuth(); // Access userId from AuthContext
   const [jobData, setJobData] = useState({ title: '', description: '', budgetMin: 0, budgetMax: 0, skillsRequired: '' });
 
   const handleChange = (event) => {
@@ -37,7 +37,7 @@ const AddJobForm = ({ open, onClose, onJobAdded }) => {
       };
   
       // Pass userId to saveJob function
-      const savedJob = await saveJob(newJob, userId);
+      const savedJob = await saveJob(newJob, accessToken);
       onJobAdded(savedJob);
       setJobData({ title: '', description: '', budgetMin: 0, budgetMax: 0, skillsRequired: '' });
       onClose();
