@@ -48,7 +48,7 @@ To run the backend, follow these steps:
 Make sure to create a `.env` file in the root of your project backend with the following contents:
 
 ```env
-MONGO_URI="mongodb+srv://viswaprateek248:<password>@cluster0.2ajhbbl.mongodb.net/"
+MONGO_URI="/"
 PORT=4000
 JWT_SECRET="abcdefgh"
 ```
