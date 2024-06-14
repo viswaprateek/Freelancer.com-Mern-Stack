@@ -3,6 +3,7 @@ import { deleteJob } from '../api';
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 
 const DeleteJob = ({ jobId, open, onClose, onJobDeleted }) => {
+  console.log(jobId)
   const handleDelete = async () => {
     console.log(jobId)
     if (jobId) {

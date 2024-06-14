@@ -1,12 +1,13 @@
-import React, { useEffect, useState, useContext } from 'react';
+// ChatComponent.jsx
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { getMessagesByContract, postMessage } from '../api';
 import { TextField, Button, Box, Typography } from '@mui/material';
-import { useAuth } from '../AuthContext'; // Assume you have a context or similar approach
+import { useAuth } from '../AuthContext'; // Ensure you have this hook
 
 const ChatComponent = () => {
     const { contractId } = useParams();
-    const { userId } = useContext(useAuth); // Assuming you have user details in context
+    const { userId } = useAuth(); // Make sure this is the actual ObjectId from the logged-in user
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
 
@@ -17,7 +18,7 @@ const ChatComponent = () => {
     const fetchMessages = async () => {
         try {
             const fetchedMessages = await getMessagesByContract(contractId);
-            setMessages(fetchedMessages.messages || []);
+            setMessages(fetchedMessages);
         } catch (error) {
             console.error('Error fetching messages:', error);
         }
@@ -28,9 +29,8 @@ const ChatComponent = () => {
         try {
             const messageData = {
                 contractId,
-                fromUser: userId, // Use logged-in user's ID
-                toUser: 'OtherUserId', // This should be dynamically set based on the context of the chat
-                message: newMessage
+                fromUser: userId, // Ensure this is a valid ObjectId
+                text: newMessage
             };
             const sentMessage = await postMessage(messageData);
             setMessages([...messages, sentMessage]);

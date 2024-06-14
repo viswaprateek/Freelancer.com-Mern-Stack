@@ -392,7 +392,6 @@ export const getMessagesByContract = async (contractId) => {
       const response = await api.get(`/messages/${contractId}`);
       return response.data;
   } catch (error) {
-      console.error('Failed to fetch messages:', error);
       throw error;
   }
 };
@@ -402,12 +401,9 @@ export const postMessage = async (messageData) => {
       const response = await api.post('/messages/', messageData);
       return response.data;
   } catch (error) {
-      console.error('Failed to post message:', error);
       throw error;
   }
 };
-
-
 
 
 
